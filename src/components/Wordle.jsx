@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import useWordle from "../hooks/useWordle";
 
 export default function Wordle({ solution }) {
-  const [allGuesses, setAllGuesses] = useState([...Array(6)]);
-  const [currentGuess, setCurrentGuess] = useState("");
-  const [turn, setTurn] = useState(0);
+  const { turn, currentGuess, guesses, isCorrect, handleKeyUp } =
+    useWordle(solution);
 
   useEffect(() => {
-    function handleKeyUp(event) {
-      const key = event.key;
-
-      if (!/^[A-Za-z]$/.test(key)) return;
-    }
-
     window.addEventListener("keyup", handleKeyUp);
     return () => window.removeEventListener("keyup", handleKeyUp);
-  }, [currentGuess, allGuesses, turn]);
+  }, [handleKeyUp]);
 
   return (
     <>
-      <div>Wordle app {solution}</div>
+      <div>
+        Solution: {solution} <br />
+        Answer: {currentGuess}
+      </div>
     </>
   );
 }
