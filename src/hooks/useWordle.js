@@ -6,13 +6,14 @@ const useWordle = (solution) => {
   const [guesses, setGuesses] = useState([...Array(6)]); // each guess is an array
   const [history, setHistory] = useState([]); // each guess is a string
   const [isCorrect, setIsCorrect] = useState(false);
+  const [usedKeys, setUsedKeys] = useState({}); // {a: 'green', b: 'yellow', c: 'grey'}
 
   // format guess into an array of letter objects
   // e.g. [{key: 'a', color: 'yellow'}]
   const formatGuess = () => {
     let solutionArray = [...solution];
     let formattedGuess = [...currentGuess].map((l) => {
-      return { key: l, color: "gray" };
+      return { key: l, color: "grey" };
     });
 
     // find any green letters
@@ -60,12 +61,43 @@ const useWordle = (solution) => {
       return prevTurn + 1;
     });
 
+    setUsedKeys((prevUsedKeys) => {
+      let newKeys = { ...prevUsedKeys };
+
+      formattedGuess.forEach((l) => {
+        const currentColor = newKeys[l.key];
+
+        if (l.color === "green") {
+          newKeys[l.key] = "green";
+          return;
+        }
+
+        if (l.color === "yellow" && currentColor !== "green") {
+          newKeys[l.key] = "yellow";
+          return;
+        }
+
+        if (
+          l.color === "grey" &&
+          currentColor !== "green" &&
+          currentColor !== "yellow"
+        ) {
+          newKeys[l.key] = "grey";
+          return;
+        }
+      });
+
+      return newKeys;
+    });
+
     setCurrentGuess("");
   };
 
   // handle keyup event and track current guess
   // if user presses enter, add the new guess
   const handleKeyUp = ({ key }) => {
+    if (key === "Ctrl") return;
+
     if (key === "Enter") {
       // only add guess if turn is less than 5
       // don't allow duplicate words, check history
@@ -89,7 +121,7 @@ const useWordle = (solution) => {
     setCurrentGuess((prev) => prev + key);
   };
 
-  return { turn, currentGuess, guesses, isCorrect, handleKeyUp };
+  return { turn, currentGuess, guesses, isCorrect, usedKeys, handleKeyUp };
 };
 
 export default useWordle;

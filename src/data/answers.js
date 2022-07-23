@@ -21,7 +21,7 @@ export const answers = [
   { id: 20, word: "robot" },
   { id: 21, word: "enjoy" },
   { id: 22, word: "grass" },
-  { id: 23, word: "Bible" },
+  { id: 23, word: "bible" },
   { id: 24, word: "swear" },
   { id: 25, word: "young" },
   { id: 26, word: "leave" },
